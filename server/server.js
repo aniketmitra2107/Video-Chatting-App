@@ -4,13 +4,15 @@ const { v4: uuidv4 } = require("uuid");
 const cors = require("cors");
 const twilio = require("twilio");
 const { disconnect } = require("process");
-
 const PORT = process.env.PORT || 5002;
 const app = express();
 const server = http.createServer(app);
 
 app.use(cors());
-
+// app.use(express.static(path.join(__dirname, 'build')))
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'))
+// })
 let connectedUsers = [];
 let rooms = [];
 
@@ -178,6 +180,11 @@ const initializeConnectionHandler = (data, socket) => {
   const initData = { connUserSocketId: socket.id };
   io.to(connUserSocketId).emit("conn-init", initData);
 };
+
+
+if ( process.env.NODE_ENV == 'production' ) {
+      app.use(express.static("/build"))
+}
 
 server.listen(PORT, () => {
   console.log(`Server is listening on ${PORT}`);
